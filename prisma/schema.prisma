@@ -1,0 +1,175 @@
+// Schema do núcleo de dados do escritório-ia.
+// Local dev usa SQLite (zero-config). Pra produção, troca o provider pra "postgresql"
+// e aponta DATABASE_URL pro Supabase — o schema não muda.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Canal {
+  whatsapp
+  email
+  chat_site
+  instagram
+}
+
+enum StatusLead {
+  novo
+  em_triagem
+  desqualificado_ja_tem_advogado
+  desqualificado_nao_atende_requisitos
+  qualificado
+}
+
+enum StatusCaso {
+  qualificado
+  proposta_enviada
+  aguardando_assinatura
+  contratado
+  agendado
+  em_andamento_advogado
+  peticao_em_elaboracao
+  peticao_aprovada
+  protocolado
+  encerrado
+}
+
+enum StatusContrato {
+  pendente
+  assinado
+  recusado
+  expirado
+}
+
+enum StatusPeticao {
+  rascunho
+  em_revisao
+  aprovado_advogado
+  protocolado
+}
+
+enum Remetente {
+  lead
+  ia
+  advogado
+}
+
+model TipoCaso {
+  id          String       @id @default(cuid())
+  nome        String       @unique // ex: "Licença Maternidade", "Negativação Indevida"
+  nicho       String // ex: "previdenciario", "consumidor", "trabalhista"
+  percentualExitoPadrao Float // ex: 0.20 = 20%
+  honorarioInicialPadrao Float // valor fixo em R$
+  requisitos  RequisitoChecklist[]
+  casos       Caso[]
+  createdAt   DateTime     @default(now())
+}
+
+model RequisitoChecklist {
+  id          String   @id @default(cuid())
+  tipoCaso    TipoCaso @relation(fields: [tipoCasoId], references: [id])
+  tipoCasoId  String
+  ordem       Int
+  pergunta    String // pergunta que a IA faz ao lead pra checar o requisito
+  obrigatorio Boolean  @default(true)
+}
+
+model Lead {
+  id            String     @id @default(cuid())
+  nome          String?
+  telefone      String?
+  email         String?
+  canalOrigem   Canal
+  origemUtm     String? // campanha/anúncio de onde veio, pra CAC
+  status        StatusLead @default(novo)
+  jaTemAdvogado Boolean?
+  mensagens     Mensagem[]
+  caso          Caso?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Caso {
+  id                  String     @id @default(cuid())
+  lead                Lead       @relation(fields: [leadId], references: [id])
+  leadId              String     @unique
+  tipoCaso            TipoCaso   @relation(fields: [tipoCasoId], references: [id])
+  tipoCasoId          String
+  status              StatusCaso @default(qualificado)
+  respostasChecklist  String? // JSON: { requisitoId: resposta }
+  fatos               String? // resumo dos fatos coletados na triagem
+  contrato            Contrato?
+  slotAgendamento     SlotAgendamento?
+  peticoes            Peticao[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+}
+
+model Contrato {
+  id                 String         @id @default(cuid())
+  caso               Caso           @relation(fields: [casoId], references: [id])
+  casoId             String         @unique
+  honorarioInicial   Float
+  percentualExito    Float
+  status             StatusContrato @default(pendente)
+  linkAssinatura     String?
+  provedorAssinatura String? // "zapsign" | "clicksign" | ...
+  idDocumentoExterno String?        @unique // id do doc no provedor de assinatura — chave que o webhook usa pra casar o evento
+  assinadoEm         DateTime?
+  ultimoLembreteEm   DateTime? // último follow-up de cobrança de assinatura enviado
+  tentativasLembrete Int            @default(0)
+  createdAt          DateTime       @default(now())
+}
+
+// Registro de todo evento de webhook processado, por provedor + id do evento —
+// garante idempotência: se o provedor reenviar o mesmo evento (comum em retry
+// de webhook), a segunda chamada é ignorada em vez de duplicar o efeito.
+model EventoWebhookProcessado {
+  id         String   @id @default(cuid())
+  provedor   String // "zapsign" | "whatsapp" | "email"
+  idEvento   String
+  processadoEm DateTime @default(now())
+
+  @@unique([provedor, idEvento])
+}
+
+// Slots de agendamento com o advogado — solução interna (sem depender de
+// Google Calendar API/OAuth) pra fechar o loop do funil sem exigir outra
+// conta externa antes de ir ao ar. Trocar por integração de calendário real
+// é um passo isolado depois, sem mudar o resto do fluxo.
+model SlotAgendamento {
+  id         String    @id @default(cuid())
+  inicio     DateTime
+  fim        DateTime
+  disponivel Boolean   @default(true)
+  caso       Caso?     @relation(fields: [casoId], references: [id])
+  casoId     String?   @unique
+  createdAt  DateTime  @default(now())
+}
+
+model Peticao {
+  id                  String         @id @default(cuid())
+  caso                Caso           @relation(fields: [casoId], references: [id])
+  casoId              String
+  tipoPeticao         String // ex: "inicial", "contestação", "recurso"
+  conteudo            String // markdown/texto do rascunho
+  jurisprudenciaCitada String? // JSON com as fontes usadas na pesquisa
+  status              StatusPeticao  @default(rascunho)
+  arquivoDocxPath     String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+}
+
+model Mensagem {
+  id        String    @id @default(cuid())
+  lead      Lead      @relation(fields: [leadId], references: [id])
+  leadId    String
+  canal     Canal
+  remetente Remetente
+  texto     String
+  createdAt DateTime  @default(now())
+}

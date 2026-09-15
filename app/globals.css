@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Tema fixo escuro (decisão de produto, não preferência do visitante — é um
+   painel operacional interno). Cores de chrome vêm da paleta validada da
+   skill dataviz; o verde-limão é o acento de marca do Jurispro. */
+:root {
+  color-scheme: dark;
+
+  --surface-page: #0d0d0d;
+  --surface-card: #1a1a19;
+  --surface-card-hover: #212120;
+  --border-hairline: rgba(255, 255, 255, 0.1);
+
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+
+  --brand: #a3e635; /* lime-400 */
+  --brand-ink: #0d0d0d; /* texto sobre fundo lime */
+
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+
+  /* categórico (gráficos multi-série), passo escuro validado */
+  --series-1: #3987e5; /* blue */
+  --series-2: #d95926; /* orange */
+  --series-3: #199e70; /* aqua */
+  --series-4: #c98500; /* yellow */
+  --series-5: #d55181; /* magenta */
+  --series-6: #008300; /* green — validado; lime fica só pra UI/marca, não passa na faixa de luminosidade categórica */
+  --series-7: #9085e9; /* violet */
+  --series-8: #e66767; /* red */
+
+  --background: var(--surface-page);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
