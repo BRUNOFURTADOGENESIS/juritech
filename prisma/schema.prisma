@@ -1,12 +1,12 @@
-// Schema do núcleo de dados do escritório-ia.
-// Local dev usa SQLite (zero-config). Pra produção, troca o provider pra "postgresql"
-// e aponta DATABASE_URL pro Supabase — o schema não muda.
+// Schema do núcleo de dados do JuriTech.
+// Postgres (Supabase) via DATABASE_URL — mesmo banco pra local e produção
+// (ou um projeto Supabase separado pra dev, se preferir isolar).
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
