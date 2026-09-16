@@ -37,7 +37,7 @@ function ChatWidget() {
     setMsgs([
       {
         remetente: "ia",
-        texto: `Olá, ${nome}! Eu sou a Bia, assistente virtual do Escritório Eduardo Corte. Me conta rapidinho o que aconteceu, que eu te ajudo a entender se conseguimos atuar no seu caso.`,
+        texto: `Olá, ${nome}! Eu sou a Bia, assistente virtual do Escritório Eduardo Corte. Atuamos com Agro, Bancário, Trabalhista, Ambiental, Cível e Consumidor. Me conta rapidinho o que aconteceu, que eu te ajudo a entender se conseguimos atuar no seu caso.`,
       },
     ]);
   }
