@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { processarMensagemLead } from "@/lib/atendimento";
 import { enviarWhatsapp } from "@/lib/whatsapp";
+import { transcreverAudio } from "@/lib/transcricao";
 
 // Webhook "ao receber mensagem" da Z-API — configurar em z-api.io na instância,
 // apontando pra esta URL. Protegido por um segredo na querystring (não é a
@@ -22,8 +23,27 @@ export async function POST(req: NextRequest) {
   }
 
   const telefone: string | undefined = body.phone;
-  const texto: string | undefined = body.text?.message ?? body.message?.text;
-  if (!telefone || !texto) {
+  if (!telefone) {
+    return NextResponse.json({ ok: true });
+  }
+
+  // Mensagem de voz: Bia precisa entender áudio, não só texto — transcreve
+  // antes de seguir pro mesmo pipeline de qualificação (o resto do fluxo não
+  // sabe nem precisa saber que veio de áudio).
+  const audioUrl: string | undefined = body.audio?.audioUrl ?? body.audio?.url;
+  let texto: string | undefined = body.text?.message ?? body.message?.text;
+
+  if (!texto && audioUrl) {
+    try {
+      texto = await transcreverAudio(audioUrl);
+    } catch {
+      // Sem transcrição configurada/disponível — segue sem travar o atendimento,
+      // o time humano acompanha essa conversa depois pelo dashboard.
+      return NextResponse.json({ ok: true, aviso: "falha ao transcrever áudio" });
+    }
+  }
+
+  if (!texto) {
     return NextResponse.json({ ok: true }); // outros tipos de evento (status, imagem, etc.), ignorar por ora
   }
 

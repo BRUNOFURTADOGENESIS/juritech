@@ -37,7 +37,7 @@ function ChatWidget() {
     setMsgs([
       {
         remetente: "ia",
-        texto: `Olá, ${nome}! Sou a assistente virtual do escritório. Me conta rapidinho o que aconteceu, que eu te ajudo a entender se conseguimos atuar no seu caso.`,
+        texto: `Olá, ${nome}! Eu sou a Bia, assistente virtual do Escritório Eduardo Corte. Me conta rapidinho o que aconteceu, que eu te ajudo a entender se conseguimos atuar no seu caso.`,
       },
     ]);
   }
@@ -78,7 +78,7 @@ function ChatWidget() {
         >
           <LogoMark size={26} />
           <div>
-            <div className="text-sm font-semibold">Fale conosco</div>
+            <div className="text-sm font-semibold">Bia — Escritório Eduardo Corte</div>
             <div className="text-xs" style={{ color: "var(--text-muted)" }}>
               Resposta imediata
             </div>
