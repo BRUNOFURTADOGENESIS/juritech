@@ -1,0 +1,108 @@
+import type { ModeloCaso } from "./tipos";
+
+const CC = "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm";
+const CPC = "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm";
+
+export const MODELOS_CIVEL: ModeloCaso[] = [
+  {
+    id: "civel-indenizacao-responsabilidade-civil",
+    area: "civel",
+    nome: "Ação de indenização por responsabilidade civil",
+    tiposPeticao: ["inicial"],
+    palavrasChave: ["indenização", "responsabilidade civil", "dano moral", "dano material", "acidente"],
+    descricao: "Reparação de danos materiais e morais decorrentes de ato ilícito fora de relação de consumo.",
+    estruturaPeca: [
+      "Endereçamento (juízo competente)",
+      "Qualificação das partes",
+      "Dos fatos",
+      "Do direito (ato ilícito, dano, nexo causal, culpa)",
+      "Dos danos materiais e morais",
+      "Da tutela provisória (se cabível)",
+      "Dos pedidos",
+      "Do valor da causa",
+      "Das provas e fecho",
+    ],
+    fatosEssenciais: [
+      "Data, local e dinâmica do fato",
+      "Conduta atribuída ao réu e nexo com o dano",
+      "Despesas comprovadas (danos materiais)",
+      "Repercussão pessoal (danos morais)",
+    ],
+    documentosUsuais: ["Documentos pessoais", "Comprovantes de despesa", "Boletim de ocorrência, se houver", "Fotos/laudos"],
+    pedidosTipicos: ["Condenação em danos materiais", "Condenação em danos morais", "Juros e correção", "Custas e honorários"],
+    pontosDeAtencao: [
+      "Conferir prazo prescricional aplicável ao caso concreto",
+      "Conferir competência (foro e Juizado Especial por valor)",
+      "Quantificação do dano moral é decisão do advogado",
+    ],
+    fundamentos: [
+      { norma: "Código Civil (Lei 10.406/2002)", artigos: "arts. 186, 187 e 927", tema: "Ato ilícito e dever de indenizar", url: CC, verificado: false },
+      { norma: "Código Civil (Lei 10.406/2002)", artigos: "arts. 944 a 954", tema: "Extensão e liquidação da indenização", url: CC, verificado: false },
+      { norma: "Código de Processo Civil (Lei 13.105/2015)", artigos: "arts. 319 e 320", tema: "Requisitos da petição inicial", url: CPC, verificado: false },
+    ],
+    buscaJurisprudencia: ["dano moral quantificação responsabilidade civil", "nexo causal ato ilícito indenização"],
+  },
+  {
+    id: "civel-cobranca",
+    area: "civel",
+    nome: "Ação de cobrança",
+    tiposPeticao: ["inicial"],
+    palavrasChave: ["cobrança", "dívida", "inadimplemento", "contrato", "pagamento"],
+    descricao: "Cobrança de quantia devida por contrato ou obrigação não paga, sem título executivo.",
+    estruturaPeca: [
+      "Endereçamento",
+      "Qualificação das partes",
+      "Dos fatos (origem da obrigação e inadimplemento)",
+      "Do direito",
+      "Do cálculo do débito",
+      "Dos pedidos",
+      "Do valor da causa",
+      "Das provas e fecho",
+    ],
+    fatosEssenciais: ["Contrato ou origem da dívida", "Valor e vencimento", "Tentativas de cobrança", "Pagamentos parciais"],
+    documentosUsuais: ["Contrato", "Notas/recibos", "Planilha de cálculo", "Notificações enviadas"],
+    pedidosTipicos: ["Condenação ao pagamento do principal", "Juros e correção", "Multa contratual, se prevista", "Custas e honorários"],
+    pontosDeAtencao: [
+      "Verificar se há título executivo (pode ser caso de execução, não cobrança)",
+      "Conferir prazo prescricional",
+      "Conferir índices e termo inicial de juros",
+    ],
+    fundamentos: [
+      { norma: "Código Civil (Lei 10.406/2002)", artigos: "arts. 389, 395 e 397", tema: "Inadimplemento, mora, juros e correção", url: CC, verificado: false },
+      { norma: "Código Civil (Lei 10.406/2002)", artigos: "arts. 421 e 422", tema: "Função social do contrato e boa-fé", url: CC, verificado: false },
+      { norma: "Código de Processo Civil (Lei 13.105/2015)", artigos: "arts. 319 e 320", tema: "Requisitos da petição inicial", url: CPC, verificado: false },
+    ],
+    buscaJurisprudencia: ["ação de cobrança inadimplemento contratual juros de mora termo inicial"],
+  },
+  {
+    id: "civel-rescisao-contratual",
+    area: "civel",
+    nome: "Ação de rescisão contratual com restituição",
+    tiposPeticao: ["inicial"],
+    palavrasChave: ["rescisão", "distrato", "compra e venda", "imóvel", "restituição"],
+    descricao: "Resolução de contrato por inadimplemento ou desequilíbrio, com devolução de valores e perdas e danos.",
+    estruturaPeca: [
+      "Endereçamento",
+      "Qualificação das partes",
+      "Dos fatos",
+      "Do direito (resolução, restituição, perdas e danos)",
+      "Da tutela provisória (se cabível)",
+      "Dos pedidos",
+      "Do valor da causa",
+      "Das provas e fecho",
+    ],
+    fatosEssenciais: ["Contrato e cláusulas relevantes", "Valores pagos", "Fato que motivou a rescisão", "Notificação prévia"],
+    documentosUsuais: ["Contrato", "Comprovantes de pagamento", "Notificações", "Comunicações entre as partes"],
+    pedidosTipicos: ["Declaração de rescisão", "Restituição de valores", "Perdas e danos", "Custas e honorários"],
+    pontosDeAtencao: [
+      "Se houver relação de consumo, usar o modelo de consumidor",
+      "Conferir cláusulas penais e de retenção",
+    ],
+    fundamentos: [
+      { norma: "Código Civil (Lei 10.406/2002)", artigos: "arts. 474 e 475", tema: "Cláusula resolutiva e resolução por inadimplemento", url: CC, verificado: false },
+      { norma: "Código Civil (Lei 10.406/2002)", artigos: "arts. 402 a 404", tema: "Perdas e danos", url: CC, verificado: false },
+      { norma: "Código de Processo Civil (Lei 13.105/2015)", artigos: "arts. 319 e 320", tema: "Requisitos da petição inicial", url: CPC, verificado: false },
+    ],
+    buscaJurisprudencia: ["resolução contrato inadimplemento restituição valores pagos retenção"],
+  },
+];
