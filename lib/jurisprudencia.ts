@@ -1,4 +1,5 @@
 import { anthropic, CLAUDE_MODEL } from "./anthropic";
+import { DOMINIOS_OFICIAIS, urlOficial } from "./base-modelos/tipos";
 
 export type FontJurisprudencia = {
   titulo: string;
@@ -6,14 +7,8 @@ export type FontJurisprudencia = {
   trecho: string;
 };
 
-const FONTES_CONFIAVEIS = [
-  "stj.jus.br",
-  "stf.jus.br",
-  "tjsp.jus.br",
-  "jusbrasil.com.br",
-  "trf1.jus.br",
-  "trf3.jus.br",
-];
+// Somente fontes oficiais (Planalto, STF, STJ, TST, CNJ, TJSP). Sem agregadores.
+const FONTES_CONFIAVEIS: string[] = [...DOMINIOS_OFICIAIS];
 
 async function buscarTavily(query: string): Promise<FontJurisprudencia[]> {
   const apiKey = process.env.TAVILY_API_KEY;
@@ -40,11 +35,14 @@ async function buscarTavily(query: string): Promise<FontJurisprudencia[]> {
   }
 
   const data = await res.json();
-  return (data.results ?? []).map((r: { title: string; url: string; content: string }) => ({
-    titulo: r.title,
-    url: r.url,
-    trecho: r.content,
-  }));
+  // include_domains é só uma dica ao provedor: revalida o domínio de cada resultado.
+  return (data.results ?? [])
+    .filter((r: { url: string }) => urlOficial(r.url))
+    .map((r: { title: string; url: string; content: string }) => ({
+      titulo: r.title,
+      url: r.url,
+      trecho: r.content,
+    }));
 }
 
 // A partir dos fatos do caso, o Claude sugere 2-4 queries de busca específicas
@@ -75,9 +73,10 @@ async function gerarQueries(tipoCaso: string, fatos: string): Promise<string[]> 
 
 export async function pesquisarJurisprudencia(
   tipoCaso: string,
-  fatos: string
+  fatos: string,
+  tesesExtras: string[] = [] // teses do modelo de caso; viram queries, nunca citações
 ): Promise<FontJurisprudencia[]> {
-  const queries = await gerarQueries(tipoCaso, fatos);
+  const queries = [...tesesExtras, ...(await gerarQueries(tipoCaso, fatos))].slice(0, 5);
 
   const resultadosPorQuery = await Promise.all(
     queries.map((q) => buscarTavily(q).catch(() => [] as FontJurisprudencia[]))

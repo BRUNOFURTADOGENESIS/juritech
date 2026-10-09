@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { gerarPeticao } from "@/lib/peticao";
+import { redigirComDrCarlos } from "@/lib/dr-carlos";
 
-const schema = z.object({ tipoPeticao: z.string().default("inicial") });
+const schema = z.object({ tipoPeticao: z.string().default("inicial"), modeloId: z.string().optional() });
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { tipoPeticao } = schema.parse(await req.json().catch(() => ({})));
+  const { tipoPeticao, modeloId } = schema.parse(await req.json().catch(() => ({})));
 
   const caso = await prisma.caso.findUniqueOrThrow({
     where: { id },
     include: { lead: true, tipoCaso: true },
   });
 
-  const rascunho = await gerarPeticao({
+  const rascunho = await redigirComDrCarlos({
     tipoCaso: caso.tipoCaso.nome,
+    nicho: caso.tipoCaso.nicho,
+    modeloId,
     tipoPeticao,
     fatos: caso.fatos ?? "",
     nomeCliente: caso.lead.nome ?? "Cliente",
