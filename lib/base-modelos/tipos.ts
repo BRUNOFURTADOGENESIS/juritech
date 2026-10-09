@@ -25,7 +25,8 @@ export function urlOficial(url: string): boolean {
   }
 }
 
-export type Area = "civel" | "consumidor" | "trabalhista";
+export const AREAS = ["civel", "consumidor", "trabalhista", "familia", "previdenciario"] as const;
+export type Area = (typeof AREAS)[number];
 
 export type DispositivoLegal = {
   norma: string; // ex: "Lei 8.078/1990 (CDC)"

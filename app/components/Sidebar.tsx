@@ -10,6 +10,7 @@ const ITENS = [
   { href: "/casos", label: "Casos", icon: "◫" },
   { href: "/agendamento", label: "Agendamento", icon: "◔" },
   { href: "/tipos-caso", label: "Tipos de caso", icon: "◪" },
+  { href: "/modelos", label: "Modelos (Dr. Carlos)", icon: "◬" },
   { href: "/metricas", label: "Métricas", icon: "◩" },
 ];
 

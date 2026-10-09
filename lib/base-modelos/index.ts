@@ -1,11 +1,13 @@
 import { MODELOS_CIVEL } from "./civel";
 import { MODELOS_CONSUMIDOR } from "./consumidor";
 import { MODELOS_TRABALHISTA } from "./trabalhista";
+import { MODELOS_FAMILIA } from "./familia";
+import { MODELOS_PREVIDENCIARIO } from "./previdenciario";
 import { urlOficial, type Area, type ModeloCaso } from "./tipos";
 
 export * from "./tipos";
 
-export const MODELOS: ModeloCaso[] = [...MODELOS_CIVEL, ...MODELOS_CONSUMIDOR, ...MODELOS_TRABALHISTA];
+export const MODELOS: ModeloCaso[] = [...MODELOS_CIVEL, ...MODELOS_CONSUMIDOR, ...MODELOS_TRABALHISTA, ...MODELOS_FAMILIA, ...MODELOS_PREVIDENCIARIO];
 
 // Garante em tempo de carga que nenhuma fonte fora da lista oficial entrou na base.
 for (const m of MODELOS) {
